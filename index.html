@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI - ClubForWeb</title>
+    <title>Ginevra AI</title>
     <style>
         body { 
             margin: 0; padding: 0; height: 100vh; 
@@ -32,37 +32,45 @@
 
         .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 30px; }
 
-        /* Questo contenitore serve solo a tenere il widget al centro senza toccarne lo stile */
+        /* AREA WIDGET: Modificata per spostamento */
         .widget-area {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 120px;
+            display: flex; 
+            justify-content: center; 
+            align-items: center; 
+            min-height: 100px;
+            /* --- RIGHE PER SPOSTAMENTO --- */
+            margin-left: 50px;  /* Lo sposta a DESTRA */
+            margin-top: -20px;  /* Lo sposta più in ALTO */
         }
 
-        /* RESET TOTALE: Non tocchiamo più i "parts" del widget */
+        elevenlabs-convai::part(container) {
+            background: transparent !important;
+            box-shadow: none !important;
+            border: none !important;
+        }
+
+        elevenlabs-convai::part(button) {
+            background-color: #28a745 !important;
+        }
+
         elevenlabs-convai {
             position: relative !important;
-            margin: 0 auto !important;
         }
     </style>
 </head>
 <body>
-
     <div class="container">
         <div class="status-header">ASSISTENTE VOCALE CLUB FOR WEB</div>
         <div class="avatar-circle"></div>
         <div class="name-title">Ginevra</div>
-
         <div class="widget-area">
             <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
         </div>
     </div>
-
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-
 </body>
 </html>
+
 
 
 
