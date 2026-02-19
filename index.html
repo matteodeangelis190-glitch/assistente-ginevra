@@ -34,42 +34,31 @@
 
         .name-title { font-size: 2.8em; font-weight: bold; margin: 20px 0 40px 0; }
 
-        .controls {
-            display: flex; justify-content: center; gap: 50px; position: relative;
-        }
+        .controls { display: flex; justify-content: center; gap: 50px; }
 
         .btn {
             width: 75px; height: 75px; border-radius: 50%; border: none;
             display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: transform 0.2s;
         }
+        
+        .btn:hover { transform: scale(1.1); }
 
         .btn-start { background-color: #28a745; box-shadow: 0 0 20px rgba(40, 167, 69, 0.4); }
-        .btn-end { background-color: #dc3545; box-shadow: 0 0 20px rgba(220, 53, 69, 0.4); cursor: pointer; z-index: 10; }
+        .btn-end { background-color: #dc3545; box-shadow: 0 0 20px rgba(220, 53, 69, 0.4); }
 
         svg { fill: white; width: 35px; height: 35px; }
 
-        /* IL TRUCCO: Il widget è SOPRA il tasto verde ma invisibile */
-        .widget-overlay {
-            position: absolute;
-            left: calc(50% - 112px); /* Centrato perfettamente sopra il tasto verde */
-            top: 0;
-            width: 75px;
-            height: 75px;
-            opacity: 0; /* Invisibile */
-            z-index: 5;
-            overflow: hidden;
-        }
-
-        elevenlabs-convai {
-            transform: scale(3); /* Ingrandito per coprire tutta l'area del tasto */
-            transform-origin: center;
+        /* Widget completamente nascosto e rimosso dal flusso visivo */
+        elevenlabs-convai { 
+            display: none !important; 
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="status-header">ASSISTENTE VIRTUALE ClubForWeb</div>
+        <div class="status-header" id="status-label">ASSISTENTE VIRTUALE ClubForWeb</div>
 
         <div class="avatar-container">
             <div class="avatar-circle"></div>
@@ -78,21 +67,46 @@
         <div class="name-title">Ginevra</div>
 
         <div class="controls">
-            <button class="btn btn-start">
+            <button class="btn btn-start" onclick="forceStartCall()">
                 <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
             </button>
-
-            <div class="widget-overlay">
-                <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
-            </div>
 
             <button class="btn btn-end" onclick="location.reload()">
                 <svg viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9V9.72C15.15 9.25 13.6 9 12 9z"/></svg>
             </button>
         </div>
+
+        <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
     </div>
 
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+
+    <script>
+        function forceStartCall() {
+            const widget = document.querySelector('elevenlabs-convai');
+            const label = document.getElementById('status-label');
+
+            // Rendiamo il widget visibile per un millisecondo per poterlo cliccare
+            widget.style.display = 'block';
+            
+            setTimeout(() => {
+                try {
+                    // Cerchiamo il bottone originale dentro lo Shadow DOM
+                    const btn = widget.shadowRoot.querySelector('button');
+                    if (btn) {
+                        btn.click();
+                        label.innerText = "IN COLLEGAMENTO...";
+                    }
+                    // Lo nascondiamo subito dopo il click
+                    widget.style.display = 'none';
+                } catch (e) {
+                    console.log("Widget non ancora pronto...");
+                }
+            }, 100);
+        }
+    </script>
 </body>
 </html>
-
+ 
+   
+       
