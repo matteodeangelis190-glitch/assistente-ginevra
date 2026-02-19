@@ -30,46 +30,32 @@
             box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
         }
 
-        .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 40px; }
+        .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 30px; }
 
-        /* AREA COMANDI CENTRALE */
-        .controls {
+        /* CONTENITORE WIDGET CENTRALE */
+        .widget-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            gap: 30px;
-            position: relative;
+            min-height: 100px;
         }
 
-        /* TASTO ROSSO PER CHIUDERE */
-        .btn-end {
-            width: 65px; height: 65px; border-radius: 50%; border: none;
-            background-color: #dc3545; 
-            box-shadow: 0 0 20px rgba(220, 53, 69, 0.4); 
-            cursor: pointer;
-            display: flex; align-items: center; justify-content: center;
-            z-index: 10;
-        }
-
-        svg { fill: white; width: 30px; height: 30px; }
-
-        /* SPOSTIAMO E MODIFICHIAMO IL WIDGET DI ELEVENLABS */
+        /* MODIFICHE ESTETICHE AL WIDGET */
         elevenlabs-convai {
             position: relative !important;
             bottom: auto !important;
             right: auto !important;
-            margin: 0 !important;
         }
 
-        /* Questo serve per forzare il widget a non mostrare l'avatar e a essere verde */
-        elevenlabs-convai::part(button) {
-            background-color: #28a745 !important;
-            border-radius: 50px !important;
-            padding: 10px 20px !important;
-        }
-
+        /* Rimuove l'immagine tonda piccola dal widget */
         elevenlabs-convai::part(avatar) {
-            display: none !important; /* NASCONDE L'IMMAGINE PICCOLA */
+            display: none !important;
+        }
+
+        /* Rimuove lo sfondo bianco e l'ombra del contenitore del widget per pulizia */
+        elevenlabs-convai::part(container) {
+            background: transparent !important;
+            box-shadow: none !important;
         }
     </style>
 </head>
@@ -82,18 +68,16 @@
 
         <div class="name-title">Ginevra</div>
 
-        <div class="controls">
+        <div class="widget-area">
             <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
-
-            <button class="btn-end" onclick="location.reload()">
-                <svg viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.70.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9V9.72C15.15 9.25 13.6 9 12 9z"/></svg>
-            </button>
         </div>
     </div>
 
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+
 </body>
 </html>
+
 
 
 
