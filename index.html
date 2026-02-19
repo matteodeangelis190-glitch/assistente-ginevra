@@ -21,7 +21,7 @@
             text-transform: uppercase; font-weight: 300; margin-bottom: 30px;
         }
 
-        .avatar-container { position: relative; width: 240px; height: 240px; margin: 0 auto; }
+        .avatar-container { position: relative; width: 220px; height: 220px; margin: 0 auto; }
 
         .avatar-circle {
             width: 100%; height: 100%; border-radius: 50%;
@@ -32,34 +32,49 @@
             box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
         }
 
-        .name-title { font-size: 2.8em; font-weight: bold; margin: 20px 0 40px 0; }
+        .name-title { font-size: 2.5em; font-weight: bold; margin: 20px 0 30px 0; }
 
-        .controls { display: flex; justify-content: center; gap: 50px; }
-
-        .btn {
-            width: 75px; height: 75px; border-radius: 50%; border: none;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer;
+        /* AREA COMANDI REVISIONATA */
+        .controls-area {
+            background: rgba(255, 255, 255, 0.05);
+            padding: 20px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
         }
 
-        .btn-start { background-color: #28a745; box-shadow: 0 0 20px rgba(40, 167, 69, 0.4); }
-        .btn-end { background-color: #dc3545; box-shadow: 0 0 20px rgba(220, 53, 69, 0.4); }
+        .instruction {
+            font-size: 0.9em;
+            color: #aaa;
+            margin-bottom: 10px;
+        }
 
-        svg { fill: white; width: 35px; height: 35px; }
+        /* Il widget ora è libero di apparire qui */
+        .widget-box {
+            min-height: 80px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
 
-        /* Lasciamo che il widget si carichi normalmente ma lo rendiamo invisibile */
-        elevenlabs-convai {
-            opacity: 0.01; /* Quasi invisibile */
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
+        .btn-reset {
+            background-color: #dc3545;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            font-weight: bold;
+            text-transform: uppercase;
         }
     </style>
 </head>
 <body>
 
     <div class="container">
-        <div class="status-header" id="status-label">ASSISTENTE VIRTUALE CLUBFORWEB</div>
+        <div class="status-header">ASSISTENTE VIRTUALE CLUBFORWEB</div>
 
         <div class="avatar-container">
             <div class="avatar-circle"></div>
@@ -67,40 +82,18 @@
 
         <div class="name-title">Ginevra</div>
 
-        <div class="controls">
-            <button class="btn btn-start" onclick="avviaGinevra()">
-                <svg viewBox="0 0 24 24"><path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/></svg>
-            </button>
+        <div class="controls-area">
+            <div class="instruction">Clicca il tasto qui sotto per parlare:</div>
+            
+            <div class="widget-box">
+                <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
+            </div>
 
-            <button class="btn btn-end" onclick="location.reload()">
-                <svg viewBox="0 0 24 24"><path d="M12 9c-1.6 0-3.15.25-4.6.72v3.1c0 .39-.23.74-.56.9-.98.49-1.87 1.12-2.66 1.85-.18.18-.43.28-.7.28-.28 0-.53-.11-.71-.29L.29 13.08c-.18-.17-.29-.42-.29-.7 0-.28.11-.53.29-.71C3.34 8.78 7.46 7 12 7s8.66 1.78 11.71 4.67c.18.18.29.43.29.71 0 .28-.11.53-.29.71l-2.48 2.48c-.18.18-.43.29-.71.29-.27 0-.52-.11-.7-.28-.79-.74-1.69-1.36-2.67-1.85-.33-.16-.56-.5-.56-.9V9.72C15.15 9.25 13.6 9 12 9z"/></svg>
-            </button>
+            <button class="btn-reset" onclick="location.reload()">Termina Chiamata</button>
         </div>
-
-        <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
     </div>
 
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-
-    <script>
-        function avviaGinevra() {
-            const widget = document.querySelector('elevenlabs-convai');
-            const status = document.getElementById('status-label');
-            
-            try {
-                // Cerchiamo il vero bottone di ElevenLabs
-                const btn = widget.shadowRoot.querySelector('button');
-                if (btn) {
-                    btn.click();
-                    status.innerText = "IN COLLEGAMENTO...";
-                } else {
-                    alert("Ginevra si sta svegliando, riprova tra un istante!");
-                }
-            } catch (e) {
-                alert("Il sistema non è ancora pronto. Attendi 2 secondi.");
-            }
-        }
-    </script>
 </body>
 </html>
 
