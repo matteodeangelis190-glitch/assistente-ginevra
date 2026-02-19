@@ -32,7 +32,7 @@
 
         .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 30px; }
 
-        /* CONTENITORE WIDGET CENTRALE */
+        /* AREA WIDGET: Comandata da ElevenLabs */
         .widget-area {
             display: flex;
             justify-content: center;
@@ -40,22 +40,15 @@
             min-height: 100px;
         }
 
-        /* MODIFICHE ESTETICHE AL WIDGET */
         elevenlabs-convai {
             position: relative !important;
             bottom: auto !important;
             right: auto !important;
         }
 
-        /* Rimuove l'immagine tonda piccola dal widget */
+        /* L'unico comando rimasto: nasconde l'immagine piccola se non la vuoi */
         elevenlabs-convai::part(avatar) {
             display: none !important;
-        }
-
-        /* Rimuove lo sfondo bianco e l'ombra del contenitore del widget per pulizia */
-        elevenlabs-convai::part(container) {
-            background: transparent !important;
-            box-shadow: none !important;
         }
     </style>
 </head>
@@ -63,9 +56,7 @@
 
     <div class="container">
         <div class="status-header">ASSISTENTE VOCALE CLUB FOR WEB</div>
-
         <div class="avatar-circle"></div>
-
         <div class="name-title">Ginevra</div>
 
         <div class="widget-area">
