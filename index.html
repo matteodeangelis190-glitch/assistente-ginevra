@@ -16,7 +16,6 @@
 
         .container { text-align: center; width: 100%; max-width: 450px; }
 
-        /* Titolo richiesto */
         .status-header {
             font-size: 1.1em;
             color: #00ffcc;
@@ -26,7 +25,6 @@
             margin-bottom: 30px;
         }
 
-        /* Avatar circolare sistemato come da foto ok */
         .avatar-container {
             position: relative;
             width: 240px; height: 240px;
@@ -38,8 +36,8 @@
             border-radius: 50%;
             border: 4px solid #00ffcc;
             background-image: url('ginevra_viso.png'); 
-            background-size: 110%; /* Zoom corretto */
-            background-position: center 22%; /* Centratura viso ok */
+            background-size: 110%; 
+            background-position: center 22%;
             position: relative;
             z-index: 2;
             box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
@@ -66,7 +64,6 @@
             margin: 20px 0 40px 0;
         }
 
-        /* Tasti chiamata stile SinergIA */
         .controls {
             display: flex;
             justify-content: center;
@@ -87,13 +84,13 @@
 
         svg { fill: white; width: 35px; height: 35px; }
 
-        /* Widget ElevenLabs - reso visibile ma piccolo per forzare i permessi */
+        /* Questo nasconde il pulsante brutto di ElevenLabs rendendolo cliccabile dai nostri tasti */
         elevenlabs-convai { 
-            position: fixed;
-            bottom: 20px;
-            right: 20px;
-            opacity: 0.01; /* Quasi invisibile ma attivo per il browser */
-            z-index: 10;
+            position: absolute;
+            bottom: 0;
+            right: 0;
+            opacity: 0;
+            pointer-events: none; /* Impedisce di cliccarlo per sbaglio */
         }
     </style>
 </head>
@@ -130,18 +127,19 @@
             const pulse = document.getElementById('pulse-effect');
 
             try {
-                // Tenta di avviare cliccando sul pulsante del widget shadow DOM
-                const startBtn = widget.shadowRoot.querySelector('button');
-                startBtn.click();
+                // Cerchiamo il pulsante dentro il "cuore" del widget di ElevenLabs e lo clicchiamo per te
+                const internalBtn = widget.shadowRoot.querySelector('button');
+                internalBtn.click();
                 
                 label.innerText = "IN COLLEGAMENTO...";
                 pulse.style.display = 'block';
             } catch (e) {
-                console.error("Widget non pronto");
+                alert("Il sistema sta caricando. Riprova tra 2 secondi.");
             }
         }
 
         function stopCall() {
+            // Termina la sessione ricaricando la pagina (metodo più sicuro)
             location.reload();
         }
     </script>
