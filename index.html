@@ -32,23 +32,18 @@
 
         .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 30px; }
 
-        /* AREA WIDGET: Comandata da ElevenLabs */
+        /* Questo contenitore serve solo a tenere il widget al centro senza toccarne lo stile */
         .widget-area {
             display: flex;
             justify-content: center;
             align-items: center;
-            min-height: 100px;
+            min-height: 120px;
         }
 
+        /* RESET TOTALE: Non tocchiamo più i "parts" del widget */
         elevenlabs-convai {
             position: relative !important;
-            bottom: auto !important;
-            right: auto !important;
-        }
-
-        /* L'unico comando rimasto: nasconde l'immagine piccola se non la vuoi */
-        elevenlabs-convai::part(avatar) {
-            display: none !important;
+            margin: 0 auto !important;
         }
     </style>
 </head>
