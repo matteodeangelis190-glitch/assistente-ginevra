@@ -3,95 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI - ClubForWeb</title>
+    <title>Test Ginevra</title>
     <style>
-        body { 
-            margin: 0; padding: 0; height: 100vh; 
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center; 
-            background: radial-gradient(circle at center, #002d25, #000000); 
-            font-family: 'Segoe UI', sans-serif; color: white;
-            overflow: hidden;
-        }
-
-        .container { text-align: center; width: 100%; max-width: 450px; }
-
-        .status-header {
-            font-size: 1.1em; color: #00ffcc; letter-spacing: 2px;
-            text-transform: uppercase; font-weight: 300; margin-bottom: 30px;
-        }
-
-        .avatar-container { position: relative; width: 220px; height: 220px; margin: 0 auto; }
-
-        .avatar-circle {
-            width: 100%; height: 100%; border-radius: 50%;
-            border: 4px solid #00ffcc;
-            background-image: url('ginevra_viso.png'); 
-            background-size: 110%; background-position: center 22%;
-            position: relative; z-index: 2;
-            box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
-        }
-
-        .name-title { font-size: 2.5em; font-weight: bold; margin: 20px 0 30px 0; }
-
-        /* AREA COMANDI REVISIONATA */
-        .controls-area {
-            background: rgba(255, 255, 255, 0.05);
-            padding: 20px;
-            border-radius: 20px;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            gap: 15px;
-        }
-
-        .instruction {
-            font-size: 0.9em;
-            color: #aaa;
-            margin-bottom: 10px;
-        }
-
-        /* Il widget ora è libero di apparire qui */
-        .widget-box {
-            min-height: 80px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .btn-reset {
-            background-color: #dc3545;
-            color: white;
-            border: none;
-            padding: 10px 20px;
-            border-radius: 10px;
-            cursor: pointer;
-            font-weight: bold;
-            text-transform: uppercase;
-        }
+        body { background: #000; color: white; text-align: center; font-family: sans-serif; padding-top: 50px; }
+        .avatar { width: 150px; height: 150px; border-radius: 50%; border: 2px solid #00ffcc; margin-bottom: 20px; }
+        .box { background: #111; padding: 20px; border-radius: 15px; display: inline-block; }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <div class="status-header">ASSISTENTE VIRTUALE CLUBFORWEB</div>
-
-        <div class="avatar-container">
-            <div class="avatar-circle"></div>
-        </div>
-
-        <div class="name-title">Ginevra</div>
-
-        <div class="controls-area">
-            <div class="instruction">Clicca il tasto qui sotto per parlare:</div>
-            
-            <div class="widget-box">
-                <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
-            </div>
-
-            <button class="btn-reset" onclick="location.reload()">Termina Chiamata</button>
-        </div>
+    <img src="ginevra_viso.png" class="avatar">
+    <h1>Ginevra AI</h1>
+    
+    <div class="box">
+        <p>Se vedi il tasto qui sotto, cliccalo:</p>
+        <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
     </div>
+
+    <p><button onclick="location.reload()">RICARICA PAGINA</button></p>
 
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
 </body>
