@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI</title>
+    <title>Ginevra AI - Live</title>
     <style>
         body { 
             margin: 0; padding: 0; height: 100vh; 
@@ -13,60 +13,67 @@
             font-family: 'Segoe UI', sans-serif; color: white;
             overflow: hidden;
         }
+
         .container { text-align: center; width: 100%; max-width: 450px; display: flex; flex-direction: column; align-items: center; }
-        .status-header { font-size: 1.1em; color: #00ffcc; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 30px; }
+
+        /* ANIMAZIONE DEL CERCHIO */
+        @keyframes pulse-glow {
+            0% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); transform: scale(1); }
+            50% { box-shadow: 0 0 50px rgba(0, 255, 204, 0.5); transform: scale(1.02); }
+            100% { box-shadow: 0 0 20px rgba(0, 255, 204, 0.2); transform: scale(1); }
+        }
+
         .avatar-circle {
             width: 220px; height: 220px; border-radius: 50%; border: 4px solid #00ffcc;
-            background-image: url('ginevra_viso.png'); background-size: 110%; background-position: center 22%;
-            margin-bottom: 20px; box-shadow: 0 0 40px rgba(0, 255, 204, 0.2);
+            background-image: url('ginevra_viso.png'); 
+            background-size: 110%; background-position: center 22%;
+            margin-bottom: 30px;
+            animation: pulse-glow 3s infinite ease-in-out; /* Effetto vita attiva */
         }
-        .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 40px; }
-        
-        /* QUESTO BLOCCA IL WIDGET AL CENTRO E ANNULLA LO SPOSTAMENTO A DESTRA */
+
+        .name-title { font-size: 2.5em; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 15px rgba(0,255,204,0.3); }
+
+        /* AREA WIDGET: Forza la centratura */
         .widget-area {
-            width: 100%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100px;
+            width: 100%; display: flex; justify-content: center; align-items: center; min-height: 100px;
         }
 
         elevenlabs-convai {
-            position: static !important; /* Annulla il "fixed" in basso a destra */
+            position: static !important;
             margin: 0 auto !important;
         }
 
-        /* Forza il colore verde e pulisce il design */
+        /* STILE PULSANTE: Forza il verde che hai scelto */
         elevenlabs-convai::part(container) {
             background: transparent !important;
             box-shadow: none !important;
             border: none !important;
-            position: static !important;
         }
 
         elevenlabs-convai::part(button) {
-            background-color: #44bb44 !important; /* Verde come richiesto */
-            border-radius: 30px !important;
+            background-color: #44bb44 !important; /* Il verde della tua dashboard */
+            border-radius: 25px !important;
         }
 
-        /* Nasconde l'avatar piccolo all'interno del tasto */
-        elevenlabs-convai::part(avatar) {
-            display: none !important;
-        }
+        elevenlabs-convai::part(avatar) { display: none !important; }
     </style>
 </head>
 <body>
+
     <div class="container">
-        <div class="status-header">ASSISTENTE VOCALE CLUB FOR WEB</div>
         <div class="avatar-circle"></div>
         <div class="name-title">Ginevra</div>
+        
         <div class="widget-area">
             <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
         </div>
     </div>
+
     <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
+
 </body>
 </html>
+
 
 
 
