@@ -3,59 +3,56 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI - Vercel Edition</title>
+    <title>Ginevra AI - Soluzione Definitiva</title>
     <style>
         body { margin: 0; background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        #avatar-container { width: 100%; height: 100vh; background: radial-gradient(circle, #002d25, #000); }
+        #avatar-container { width: 100%; height: 100vh; background: radial-gradient(circle, #002d25, #000); position: absolute; top: 0; left: 0; }
         .ui { position: absolute; bottom: 10%; text-align: center; width: 100%; z-index: 100; }
-        button { background: #00ffcc; border: none; padding: 20px 50px; border-radius: 50px; cursor: pointer; font-size: 1.2em; font-weight: bold; color: #000; box-shadow: 0 0 20px #00ffcc; }
-        #loading-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5em; color: #00ffcc; }
+        button { background: #00ffcc; border: none; padding: 20px 50px; border-radius: 50px; cursor: pointer; font-size: 1.2em; font-weight: bold; color: #000; box-shadow: 0 0 25px #00ffcc; transition: 0.3s; }
+        button:hover { transform: scale(1.1); background: #fff; }
+        #status { position: absolute; top: 50%; width: 100%; text-align: center; color: #00ffcc; font-size: 1.2em; z-index: 50; }
     </style>
 </head>
 <body>
-    <div id="loading-msg">Caricamento Ginevra...</div>
+    <div id="status">Inizializzazione Ginevra...</div>
     <div id="avatar-container"></div>
-    <div class="ui"><button id="talkBtn" style="display:none;">CLICCA PER PARLARE</button></div>
-
-    <script type="importmap">
-    {
-        "imports": {
-            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
-            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
-            "talkinghead": "https://cdn.jsdelivr.net/npm/talkinghead@1.1.10/dist/talkinghead.mjs"
-        }
-    }
-    </script>
+    <div class="ui"><button id="talkBtn" style="display:none;">PARLA CON GINEVRA</button></div>
 
     <script type="module">
-        import { TalkingHead } from "talkinghead";
+        import { TalkingHead } from "https://cdn.jsdelivr.net/npm/talkinghead@1.1.10/dist/talkinghead.mjs";
 
         async function init() {
+            const node = document.getElementById('avatar-container');
+            const status = document.getElementById('status');
+            const btn = document.getElementById('talkBtn');
+
             try {
-                const node = document.getElementById('avatar-container');
-                const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
+                const head = new TalkingHead(node, { ttsEngine: "native", showVisualizer: false });
                 
-                // Carichiamo Ginevra direttamente dal link Ready Player Me per evitare blocchi
+                // CARICAMENTO DIRETTO: Nessun file locale, usiamo il link del server 3D
                 await head.showAvatar({
-                    url: 'avatar.glb',
+                    url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
                     body: 'full',
                     avatarMood: 'neutral'
                 });
 
-                document.getElementById('loading-msg').style.display = 'none';
-                document.getElementById('talkBtn').style.display = 'inline-block';
+                status.style.display = 'none';
+                btn.style.display = 'inline-block';
 
-                document.getElementById('talkBtn').addEventListener('click', () => {
-                    head.speakText("Ciao! Finalmente ce l'abbiamo fatta. Sono Ginevra e ora funziono perfettamente su Vercel!");
+                btn.addEventListener('click', () => {
+                    head.speakText("Ciao! Adesso il sistema è stabile. Sono Ginevra e sono pronta a lavorare per Club For Web.");
                 });
+
             } catch (err) {
-                document.getElementById('loading-msg').innerText = "Errore: " + err.message;
+                status.innerText = "Errore: Assicurati di avere una connessione stabile.";
+                console.error(err);
             }
         }
         init();
     </script>
 </body>
 </html>
+
 
 
 
