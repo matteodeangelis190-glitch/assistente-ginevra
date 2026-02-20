@@ -2,54 +2,42 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <title>Ginevra AI Professionale</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ginevra AI</title>
     <style>
-        body { margin: 0; background: radial-gradient(circle, #002d25, #000); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        #avatar-container { width: 100%; height: 80vh; }
-        .ui { position: absolute; bottom: 8%; text-align: center; width: 100%; }
-        button { background: #00ffcc; border: none; padding: 20px 60px; border-radius: 50px; cursor: pointer; font-size: 1.4em; font-weight: bold; color: #000; box-shadow: 0 0 30px rgba(0, 255, 204, 0.6); transition: 0.3s; }
-        button:hover { transform: scale(1.05); background: #fff; }
+        body { margin: 0; background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        #avatar-container { width: 100%; height: 80vh; background: radial-gradient(circle, #002d25, #000); }
+        .ui { position: absolute; bottom: 10%; text-align: center; width: 100%; z-index: 100; }
+        button { background: #00ffcc; border: none; padding: 20px 50px; border-radius: 50px; cursor: pointer; font-size: 1.2em; font-weight: bold; color: #000; box-shadow: 0 0 20px #00ffcc; }
     </style>
 </head>
 <body>
     <div id="avatar-container"></div>
-    <div class="ui"><button id="talkBtn">AVVIA GINEVRA</button></div>
+    <div class="ui"><button id="talkBtn">CLICCA PER PARLARE</button></div>
 
     <script type="module">
         import { TalkingHead } from "https://unpkg.com/talkinghead@1.1.10/dist/talkinghead.mjs";
 
         async function init() {
             const node = document.getElementById('avatar-container');
-            const head = new TalkingHead(node, { 
-                showVisualizer: false, 
-                ttsEngine: "native" 
+            const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
+            
+            // USIAMO IL LINK DIRETTO SENZA PASSARE DA GITHUB
+            await head.showAvatar({
+                url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
+                body: 'full',
+                avatarMood: 'neutral'
             });
-
-            try {
-                // Carichiamo l'avatar usando il tuo file GLB presente su GitHub
-                await head.showAvatar({
-                    url: './ginevra.glb',
-                    body: 'full',
-                    avatarMood: 'neutral'
-                });
-                console.log("Avatar caricato con successo!");
-            } catch (error) {
-                console.error("Errore: il file ginevra.glb non è stato trovato o è corrotto.");
-                // Se fallisce il locale, prova il link di backup
-                await head.showAvatar({
-                    url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
-                    body: 'full'
-                });
-            }
 
             document.getElementById('talkBtn').addEventListener('click', () => {
-                head.speakText("Ciao! Ora sono attiva e pronta. Il collegamento con il file 3D è stabilito correttamente.");
+                head.speakText("Ciao! Adesso mi vedi? Sono Ginevra e sono pronta per il tuo progetto.");
             });
         }
-        init();
+        init().catch(err => alert("Errore caricamento: " + err));
     </script>
 </body>
 </html>
+
 
 
 
