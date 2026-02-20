@@ -2,59 +2,41 @@
 <html lang="it">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI - 3D Live</title>
+    <title>Ginevra AI Professionale</title>
     <style>
-        body { 
-            margin: 0; padding: 0; height: 100vh; 
-            display: flex; flex-direction: column;
-            justify-content: center; align-items: center; 
-            background: radial-gradient(circle at center, #002d25, #000000); 
-            font-family: 'Segoe UI', sans-serif; color: white;
-            overflow: hidden;
-        }
-
-        .container { text-align: center; width: 100%; max-width: 500px; display: flex; flex-direction: column; align-items: center; }
-
-        .status-header { font-size: 1em; color: #00ffcc; letter-spacing: 2px; text-transform: uppercase; font-weight: bold; margin-bottom: 20px; }
-
-        /* SPAZIO PER L'AVATAR 3D DI READY PLAYER ME */
-        .avatar-3d-box {
-            width: 100%;
-            height: 400px; /* Spazio verticale per il busto dell'avatar */
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            margin-bottom: 10px;
-        }
-
-        .name-title { font-size: 2.2em; font-weight: bold; margin-top: 10px; }
-
-        /* RIMUOVIAMO IL VECCHIO CERCHIO FISSO */
-        /* Non serve più la classe .avatar-circle perché ora l'avatar è dentro il widget */
-
-        elevenlabs-convai {
-            width: 100% !important;
-            height: 100% !important;
-        }
+        body { margin: 0; background: radial-gradient(circle, #002d25, #000); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
+        #avatar-container { width: 100%; height: 75vh; outline: none; }
+        .ui { position: absolute; bottom: 5%; text-align: center; width: 100%; }
+        button { background: #00ffcc; border: none; padding: 18px 50px; border-radius: 40px; cursor: pointer; font-size: 1.3em; font-weight: bold; color: #000; box-shadow: 0 0 25px rgba(0, 255, 204, 0.5); }
     </style>
 </head>
 <body>
-
-    <div class="container">
-        <div class="status-header">ASSISTENTE VOCALE CLUB FOR WEB</div>
-        
-        <div class="avatar-3d-box">
-            <elevenlabs-convai agent-id="agent_1201khvbjrfxehcsyy0ak12m9wns"></elevenlabs-convai>
-        </div>
-
-        <div class="name-title">Ginevra</div>
+    <div id="avatar-container"></div>
+    <div class="ui">
+        <button id="talkBtn">AVVIA ASSISTENTE</button>
     </div>
+    <script type="module">
+        import { TalkingHead } from "https://unpkg.com/talkinghead@1.1.10/dist/talkinghead.mjs";
+        async function init() {
+            const node = document.getElementById('avatar-container');
+            const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
+            
+            // Usa il link diretto di Ready Player Me per massima stabilità
+            await head.showAvatar({
+                url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
+                body: 'full',
+                avatarMood: 'neutral'
+            });
 
-    <script src="https://elevenlabs.io/convai-widget/index.js" async type="text/javascript"></script>
-
+            document.getElementById('talkBtn').addEventListener('click', () => {
+                head.speakText("Ciao! Sono Ginevra. Adesso il sistema è configurato correttamente a costo zero. Come posso aiutarti?");
+            });
+        }
+        init();
+    </script>
 </body>
 </html>
+
 
 
 
