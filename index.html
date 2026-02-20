@@ -5,37 +5,52 @@
     <title>Ginevra AI Professionale</title>
     <style>
         body { margin: 0; background: radial-gradient(circle, #002d25, #000); color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        #avatar-container { width: 100%; height: 75vh; outline: none; }
-        .ui { position: absolute; bottom: 5%; text-align: center; width: 100%; }
-        button { background: #00ffcc; border: none; padding: 18px 50px; border-radius: 40px; cursor: pointer; font-size: 1.3em; font-weight: bold; color: #000; box-shadow: 0 0 25px rgba(0, 255, 204, 0.5); }
+        #avatar-container { width: 100%; height: 80vh; }
+        .ui { position: absolute; bottom: 8%; text-align: center; width: 100%; }
+        button { background: #00ffcc; border: none; padding: 20px 60px; border-radius: 50px; cursor: pointer; font-size: 1.4em; font-weight: bold; color: #000; box-shadow: 0 0 30px rgba(0, 255, 204, 0.6); transition: 0.3s; }
+        button:hover { transform: scale(1.05); background: #fff; }
     </style>
 </head>
 <body>
     <div id="avatar-container"></div>
-    <div class="ui">
-        <button id="talkBtn">AVVIA ASSISTENTE</button>
-    </div>
+    <div class="ui"><button id="talkBtn">AVVIA GINEVRA</button></div>
+
     <script type="module">
         import { TalkingHead } from "https://unpkg.com/talkinghead@1.1.10/dist/talkinghead.mjs";
+
         async function init() {
             const node = document.getElementById('avatar-container');
-            const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
-            
-            // Usa il link diretto di Ready Player Me per massima stabilità
-            await head.showAvatar({
-                url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
-                body: 'full',
-                avatarMood: 'neutral'
+            const head = new TalkingHead(node, { 
+                showVisualizer: false, 
+                ttsEngine: "native" 
             });
 
+            try {
+                // Carichiamo l'avatar usando il tuo file GLB presente su GitHub
+                await head.showAvatar({
+                    url: './ginevra.glb',
+                    body: 'full',
+                    avatarMood: 'neutral'
+                });
+                console.log("Avatar caricato con successo!");
+            } catch (error) {
+                console.error("Errore: il file ginevra.glb non è stato trovato o è corrotto.");
+                // Se fallisce il locale, prova il link di backup
+                await head.showAvatar({
+                    url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
+                    body: 'full'
+                });
+            }
+
             document.getElementById('talkBtn').addEventListener('click', () => {
-                head.speakText("Ciao! Sono Ginevra. Adesso il sistema è configurato correttamente a costo zero. Come posso aiutarti?");
+                head.speakText("Ciao! Ora sono attiva e pronta. Il collegamento con il file 3D è stabilito correttamente.");
             });
         }
         init();
     </script>
 </body>
 </html>
+
 
 
 
