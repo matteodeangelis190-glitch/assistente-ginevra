@@ -3,40 +3,60 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI</title>
+    <title>Ginevra AI - Vercel Edition</title>
     <style>
         body { margin: 0; background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        #avatar-container { width: 100%; height: 80vh; background: radial-gradient(circle, #002d25, #000); }
+        #avatar-container { width: 100%; height: 100vh; background: radial-gradient(circle, #002d25, #000); }
         .ui { position: absolute; bottom: 10%; text-align: center; width: 100%; z-index: 100; }
         button { background: #00ffcc; border: none; padding: 20px 50px; border-radius: 50px; cursor: pointer; font-size: 1.2em; font-weight: bold; color: #000; box-shadow: 0 0 20px #00ffcc; }
+        #loading-msg { position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.5em; color: #00ffcc; }
     </style>
 </head>
 <body>
+    <div id="loading-msg">Caricamento Ginevra...</div>
     <div id="avatar-container"></div>
-    <div class="ui"><button id="talkBtn">CLICCA PER PARLARE</button></div>
+    <div class="ui"><button id="talkBtn" style="display:none;">CLICCA PER PARLARE</button></div>
+
+    <script type="importmap">
+    {
+        "imports": {
+            "three": "https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.module.js",
+            "three/examples/jsm/": "https://cdn.jsdelivr.net/npm/three@0.160.0/examples/jsm/",
+            "talkinghead": "https://cdn.jsdelivr.net/npm/talkinghead@1.1.10/dist/talkinghead.mjs"
+        }
+    }
+    </script>
 
     <script type="module">
-        import { TalkingHead } from "https://unpkg.com/talkinghead@1.1.10/dist/talkinghead.mjs";
+        import { TalkingHead } from "talkinghead";
 
         async function init() {
-            const node = document.getElementById('avatar-container');
-            const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
-            
-            // USIAMO IL LINK DIRETTO SENZA PASSARE DA GITHUB
-            await head.showAvatar({
-                url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
-                body: 'full',
-                avatarMood: 'neutral'
-            });
+            try {
+                const node = document.getElementById('avatar-container');
+                const head = new TalkingHead(node, { showVisualizer: false, ttsEngine: "native" });
+                
+                // Carichiamo Ginevra direttamente dal link Ready Player Me per evitare blocchi
+                await head.showAvatar({
+                    url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
+                    body: 'full',
+                    avatarMood: 'neutral'
+                });
 
-            document.getElementById('talkBtn').addEventListener('click', () => {
-                head.speakText("Ciao! Adesso mi vedi? Sono Ginevra e sono pronta per il tuo progetto.");
-            });
+                document.getElementById('loading-msg').style.display = 'none';
+                document.getElementById('talkBtn').style.display = 'inline-block';
+
+                document.getElementById('talkBtn').addEventListener('click', () => {
+                    head.speakText("Ciao! Finalmente ce l'abbiamo fatta. Sono Ginevra e ora funziono perfettamente su Vercel!");
+                });
+            } catch (err) {
+                document.getElementById('loading-msg').innerText = "Errore: " + err.message;
+            }
         }
-        init().catch(err => alert("Errore caricamento: " + err));
+        init();
     </script>
 </body>
 </html>
+
 
 
 
