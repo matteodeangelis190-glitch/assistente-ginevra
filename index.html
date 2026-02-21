@@ -12,26 +12,70 @@
             height: 100vh; display: flex; justify-content: center; align-items: center;
             color: white; overflow: hidden;
         }
+
         .container { text-align: center; width: 100%; max-width: 400px; }
-        .header-title { font-size: 12px; letter-spacing: 3px; font-weight: bold; color: rgba(255,255,255,0.8); margin-bottom: 30px; text-transform: uppercase; }
-        .avatar-wrapper { position: relative; width: 220px; height: 220px; margin: 0 auto; }
-        .avatar-img { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #ffffff; position: relative; z-index: 5; object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.3); }
-        .pulse { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); z-index: 1; display: none; }
-        .active-call .pulse { display: block; animation: pulse-ring 1.2s infinite ease-out; }
-        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
+
+        .header-title {
+            font-size: 12px; letter-spacing: 3px; font-weight: bold;
+            color: rgba(255,255,255,0.8); margin-bottom: 30px; text-transform: uppercase;
+        }
+
+        .avatar-wrapper {
+            position: relative; width: 220px; height: 220px; margin: 0 auto;
+        }
+
+        .avatar-img {
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 4px solid #ffffff; position: relative; z-index: 5;
+            object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.3);
+        }
+
+        .pulse {
+            position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.4);
+            z-index: 1; display: none;
+        }
+
+        .active-call .pulse {
+            display: block; animation: pulse-ring 1.2s infinite ease-out;
+        }
+
+        @keyframes pulse-ring {
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.5); opacity: 0; }
+        }
+
         .ginevra-name { font-size: 42px; margin: 20px 0; font-weight: bold; }
-        .call-button { background-color: white; color: #0a4d4a; border: none; padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+
+        .call-button {
+            background-color: white; color: #0a4d4a; border: none;
+            padding: 15px 40px; border-radius: 50px; font-size: 18px;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+        }
+
         .call-button.active { background-color: #ff4d4d; color: white; }
-        #status { margin-top: 25px; font-size: 14px; color: #ffffff; height: 20px; font-weight: 300; font-style: italic; }
+
+        #status {
+            margin-top: 25px; font-size: 14px; color: #ffffff;
+            height: 20px; font-weight: 300; font-style: italic;
+        }
     </style>
 </head>
 <body>
 
     <div class="container" id="app">
         <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
-        <div class="avatar-wrapper"><div class="pulse"></div><img src="ginevra_viso.png" class="avatar-img" alt="Ginevra"></div>
+        
+        <div class="avatar-wrapper">
+            <div class="pulse"></div>
+            <img src="ginevra_viso.png" class="avatar-img" alt="Ginevra">
+        </div>
+
         <div class="ginevra-name">Ginevra</div>
+
         <button class="call-button" id="btnAction">Inizia la Chiamata</button>
+        
         <div id="status"></div>
     </div>
 
@@ -41,20 +85,22 @@
         const status = document.getElementById('status');
         
         let isCalling = false;
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const SpeechRecognition = window.SpeechRecognition || window.webkit_speech_recognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
         recognition.lang = 'it-IT';
+        recognition.continuous = false;
 
+        // --- FUNZIONE VOCE OTTIMIZZATA PER EDGE ---
         function parla(testo) {
-            if (!isCalling) return; // Non parlare se la chiamata è chiusa
+            if (!isCalling) return;
             window.speechSynthesis.cancel();
             
-            // PULIZIA TOTALE: Rimuove simboli e parole lette male
+            // 1. Pulizia totale del testo (asterischi, freccette, ecc.)
             let t = testo.replace(/\*/g, '')
-                         .replace(/>/g, '') // Rimuove il simbolo freccetta
-                         .replace(/freccetta/gi, '') // Rimuove la parola se generata
-                         .replace(/destra/gi, '') // Rimuove la parola "destra" se accoppiata a freccetta
+                         .replace(/>/g, '')
                          .replace(/asterisco/gi, '')
+                         .replace(/freccetta/gi, '')
+                         .replace(/destra/gi, '')
                          .replace(/[#_~`]/g, '')
                          .replace(/\s+/g, ' ')
                          .trim();
@@ -63,12 +109,21 @@
             msg.lang = 'it-IT';
             
             const voices = window.speechSynthesis.getVoices();
-            const ginevraVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
+            
+            // LOGICA DI SELEZIONE VOCE:
+            // Cerchiamo nell'ordine: 1. Natural (Edge), 2. Isabella, 3. Google, 4. Prima voce italiana
+            const ginevraVoice = voices.find(v => v.name.includes('Natural') && v.lang.includes('it')) 
+                                 || voices.find(v => v.name.includes('Isabella'))
+                                 || voices.find(v => v.name.includes('Google') && v.lang.includes('it'))
                                  || voices.find(v => v.lang.includes('it'));
 
-            if (ginevraVoice) msg.voice = ginevraVoice;
+            if (ginevraVoice) {
+                msg.voice = ginevraVoice;
+                console.log("Ginevra sta usando la voce: " + ginevraVoice.name);
+            }
+
             msg.pitch = 1.1; 
-            msg.rate = 1.0; 
+            msg.rate = 0.95; // Leggermente più lenta per essere più naturale
 
             msg.onend = () => { if(isCalling) recognition.start(); };
             window.speechSynthesis.speak(msg);
@@ -82,11 +137,10 @@
                 btn.innerText = "Termina";
                 parla("Ciao! Sono Ginevra. Chiedimi pure quello che vuoi!");
             } else {
-                // STOP IMMEDIATO DI TUTTO
                 isCalling = false;
-                window.speechSynthesis.cancel(); // Zittisce la voce
-                recognition.stop(); // Ferma l'ascolto
-                location.reload(); // Reset totale
+                window.speechSynthesis.cancel();
+                recognition.stop();
+                location.reload(); 
             }
         };
 
@@ -105,14 +159,16 @@
                 status.innerText = ""; 
                 if (isCalling) parla(data.text);
             } catch (error) {
-                console.error(error);
+                console.error("Errore connessione:", error);
             }
         };
 
+        // Caricamento iniziale delle voci
         window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     </script>
 </body>
 </html>
+
 
 
 
