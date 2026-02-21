@@ -9,7 +9,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            /* Sfondo Teal/Acquamarina come richiesto */
             background: radial-gradient(circle at center, #1fb9b3 0%, #0a4d4a 100%);
             height: 100vh;
             display: flex;
@@ -48,7 +47,6 @@
             box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
 
-        /* Effetto Onda Dinamica */
         .pulse {
             position: absolute;
             top: -5px; left: -5px; right: -5px; bottom: -5px;
@@ -74,7 +72,6 @@
             font-weight: bold;
         }
 
-        /* Pulsante come da tua immagine */
         .call-button {
             background-color: white;
             color: #0a4d4a;
@@ -90,7 +87,6 @@
             transition: all 0.3s;
         }
 
-        .call-button:hover { transform: scale(1.05); }
         .call-button.active { background-color: #ff4d4d; color: white; border: none; }
 
         #status {
@@ -136,26 +132,21 @@
                 app.classList.add('active-call');
                 btn.classList.add('active');
                 document.getElementById('text').innerText = "Termina";
-                document.getElementById('icon').innerText = "📞";
-                parla("Ciao! Sono Ginevra. Sono pronta ad aiutarti con il sito Club For Web. Chiedimi pure dei nostri servizi!");
+                parla("Ciao! Sono Ginevra. Come posso aiutarti oggi con i servizi di Club For Web?");
             } else {
-                location.reload(); // Reset semplice per chiudere tutto
+                location.reload();
             }
         };
 
         function parla(testo) {
             const ut = new SpeechSynthesisUtterance(testo);
             ut.lang = 'it-IT';
-            
-            // TRUCCO PER VOCE FEMMINILE:
-            // Cerchiamo Alice, Elsa o Paola che sono le più dolci su Windows/Chrome
             const voices = window.speechSynthesis.getVoices();
+            // Cerchiamo una voce femminile
             let voceSelezionata = voices.find(v => v.name.includes('Alice') || v.name.includes('Google italiano') || v.name.includes('Paola'));
-            
             if (voceSelezionata) ut.voice = voceSelezionata;
-            ut.pitch = 1.3; // Alziamo il tono per renderla più femminile
-            ut.rate = 1.0;
-
+            ut.pitch = 1.3; 
+            
             ut.onend = () => {
                 if(isCalling) {
                     status.innerText = "Ginevra ti ascolta...";
@@ -165,36 +156,27 @@
             window.speechSynthesis.speak(ut);
         }
 
-        recognition.onresult = (event) => {
-            const input = event.results[0][0].transcript.toLowerCase();
-            status.innerText = "Hai detto: " + input;
-            elaboraRisposta(input);
+        recognition.onresult = async (event) => {
+            const domandaUtente = event.results[0][0].transcript;
+            status.innerText = "Hai detto: " + domandaUtente;
+            
+            // CHIAMATA A FLOWISE (Usando i tuoi dati)
+            try {
+                const response = await fetch("http://localhost:3000/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ "question": domandaUtente })
+                });
+                const data = await response.json();
+                parla(data.text);
+            } catch (error) {
+                parla("Scusami, assicurati che Flowise sia attivo sul tuo computer.");
+            }
         };
-
-        function elaboraRisposta(testo) {
-            let r = "Mi dispiace, non ho trovato questa informazione sul sito. Puoi chiedermi dei nostri servizi o di chi siamo.";
-
-            if (testo.includes("chi siete") || testo.includes("club for web") || testo.includes("chi sei")) {
-                r = "Siamo Club For Web, un'agenzia innovativa che trasforma le idee in realtà digitali. Creiamo siti, app e assistenti come me!";
-            } 
-            else if (testo.includes("servizi") || testo.includes("cosa fate") || testo.includes("siti")) {
-                r = "Ci occupiamo di sviluppo web, marketing digitale, SEO e creazione di intelligenze artificiali su misura per le aziende.";
-            }
-            else if (testo.includes("contatti") || testo.includes("dove siete") || testo.includes("sede")) {
-                r = "Puoi trovarci online sul sito clubforweb.it oppure scriverci su WhatsApp per una consulenza gratuita!";
-            }
-            else if (testo.includes("grazie") || testo.includes("ciao")) {
-                r = "Prego! È un piacere aiutarti. Hai altre domande su Club For Web?";
-            }
-
-            setTimeout(() => parla(r), 600);
-        }
-
-        // Carica voci per sicurezza
-        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     </script>
 </body>
 </html>
+
 
 
 
