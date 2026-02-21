@@ -89,23 +89,27 @@
         const recognition = new SpeechRecognition();
         recognition.lang = 'it-IT';
 
-        // --- FUNZIONE VOCE PULITA (FILTRA ASTERISCHI) ---
+        // --- FUNZIONE VOCE BLINDATA (ELIMINA OGNI TRACCIA DI ASTERISCHI) ---
         function parla(testo) {
             window.speechSynthesis.cancel();
             
-            // Rimuove asterischi, cancelletti, trattini e simboli Markdown prima di parlare
-            let testoPulito = testo.replace(/[*#_~`>]/g, '')
-                                   .replace(/[-+•]\s+/g, '. ') // Trasforma i punti elenco in pause
-                                   .replace(/\s+/g, ' ')       // Rimuove spazi doppi
-                                   .trim();
+            // 1. Rimuove il simbolo grafico *
+            let t = testo.replace(/\*/g, ''); 
             
-            const msg = new SpeechSynthesisUtterance(testoPulito);
+            // 2. Rimuove la parola "asterisco" se pronunciata per errore
+            t = t.replace(/asterisco/gi, '');
+            
+            // 3. Rimuove altri simboli Markdown e pulisce gli spazi
+            t = t.replace(/[#_~`>]/g, '')
+                 .replace(/[-+•]\s+/g, '. ') // Trasforma elenchi in pause
+                 .replace(/\s+/g, ' ')       // Rimuove spazi doppi
+                 .trim();
+            
+            const msg = new SpeechSynthesisUtterance(t);
             msg.lang = 'it-IT';
             
             const voices = window.speechSynthesis.getVoices();
-            // Cerchiamo la voce di Google (quella più bella e naturale)
             const ginevraVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
-                                 || voices.find(v => v.name.includes('Alice'))
                                  || voices.find(v => v.lang.includes('it'));
 
             if (ginevraVoice) msg.voice = ginevraVoice;
@@ -133,7 +137,6 @@
             status.innerText = "Ginevra sta elaborando...";
             
             try {
-                // Connessione al tuo Flowise locale (assicurati che Docker sia attivo)
                 const response = await fetch("http://localhost:3000/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -152,6 +155,7 @@
     </script>
 </body>
 </html>
+
 
 
 
