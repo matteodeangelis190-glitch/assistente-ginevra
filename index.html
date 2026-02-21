@@ -3,55 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra AI - Soluzione Definitiva</title>
+    <title>Ginevra - Assistente Vocale Club For Web</title>
     <style>
-        body { margin: 0; background: #000; color: white; display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; overflow: hidden; font-family: sans-serif; }
-        #avatar-container { width: 100%; height: 100vh; background: radial-gradient(circle, #002d25, #000); position: absolute; top: 0; left: 0; }
-        .ui { position: absolute; bottom: 10%; text-align: center; width: 100%; z-index: 100; }
-        button { background: #00ffcc; border: none; padding: 20px 50px; border-radius: 50px; cursor: pointer; font-size: 1.2em; font-weight: bold; color: #000; box-shadow: 0 0 25px #00ffcc; transition: 0.3s; }
-        button:hover { transform: scale(1.1); background: #fff; }
-        #status { position: absolute; top: 50%; width: 100%; text-align: center; color: #00ffcc; font-size: 1.2em; z-index: 50; }
+        /* STILE CSS */
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+            background: radial-gradient(circle, #0a2e2c 0%, #000000 100%);
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            overflow: hidden;
+        }
+
+        .container {
+            text-align: center;
+            width: 100%;
+            max-width: 500px;
+        }
+
+        .header-title {
+            font-size: 14px;
+            letter-spacing: 3px;
+            font-weight: bold;
+            color: #5dece6;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        /* Avatar e Cerchio Dinamico */
+        .avatar-wrapper {
+            position: relative;
+            width: 220px;
+            height: 220px;
+            margin: 0 auto;
+        }
+
+        .avatar-img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            border: 3px solid #5dece6;
+            position: relative;
+            z-index: 5;
+            object-fit: cover;
+            background-color: #000;
+        }
+
+        /* Effetto Pulse Chiamata */
+        .pulse {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            background: rgba(93, 236, 230, 0.4);
+            z-index: 1;
+            display: none; /* Si attiva solo in chiamata */
+        }
+
+        .active-call .pulse {
+            display: block;
+            animation: pulse-animation 2s infinite;
+        }
+
+        @keyframes pulse-animation {
+            0% { transform: scale(1); opacity: 0.8; }
+            100% { transform: scale(1.6); opacity: 0; }
+        }
+
+        .ginevra-name {
+            font-size: 38px;
+            margin: 25px 0;
+            font-weight: bold;
+            letter-spacing: 1px;
+        }
+
+        /* Pulsante Centrale */
+        .call-button {
+            background-color: white;
+            color: black;
+            border: none;
+            padding: 16px 45px;
+            border-radius: 50px;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+        }
+
+        .call-button:hover {
+            transform: scale(1.05);
+            background-color: #5dece6;
+        }
+
+        .call-button.calling {
+            background-color: #ff4b4b;
+            color: white;
+        }
+
+        .mic-icon {
+            font-size: 20px;
+        }
     </style>
 </head>
 <body>
-    <div id="status">Inizializzazione Ginevra...</div>
-    <div id="avatar-container"></div>
-    <div class="ui"><button id="talkBtn" style="display:none;">PARLA CON GINEVRA</button></div>
 
-    <script type="module">
-        import { TalkingHead } from "https://cdn.jsdelivr.net/npm/talkinghead@1.1.10/dist/talkinghead.mjs";
+    <div class="container" id="mainContainer">
+        <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
+        
+        <div class="avatar-wrapper">
+            <div class="pulse"></div>
+            <img src="ginevra_viso.png" class="avatar-img" alt="Ginevra">
+        </div>
 
-        async function init() {
-            const node = document.getElementById('avatar-container');
-            const status = document.getElementById('status');
-            const btn = document.getElementById('talkBtn');
+        <div class="ginevra-name">Ginevra</div>
 
-            try {
-                const head = new TalkingHead(node, { ttsEngine: "native", showVisualizer: false });
+        <button class="call-button" id="btnCall" onclick="toggleCall()">
+            <span class="mic-icon">🎤</span> <span id="btnText">Inizia la Chiamata</span>
+        </button>
+    </div>
+
+    <script>
+        /* FUNZIONAMENTO JAVASCRIPT */
+        let isCalling = false;
+
+        function toggleCall() {
+            const container = document.getElementById('mainContainer');
+            const btn = document.getElementById('btnCall');
+            const btnText = document.getElementById('btnText');
+
+            if (!isCalling) {
+                // Inizia Chiamata
+                isCalling = true;
+                container.classList.add('active-call');
+                btn.classList.add('calling');
+                btnText.innerText = "Termina Chiamata";
                 
-                // CARICAMENTO DIRETTO: Nessun file locale, usiamo il link del server 3D
-                await head.showAvatar({
-                    url: 'https://models.readyplayer.me/6998745c8c4f96df511c2b48.glb',
-                    body: 'full',
-                    avatarMood: 'neutral'
-                });
-
-                status.style.display = 'none';
-                btn.style.display = 'inline-block';
-
-                btn.addEventListener('click', () => {
-                    head.speakText("Ciao! Adesso il sistema è stabile. Sono Ginevra e sono pronta a lavorare per Club For Web.");
-                });
-
-            } catch (err) {
-                status.innerText = "Errore: Assicurati di avere una connessione stabile.";
-                console.error(err);
+                // Qui l'assistente inizia a "parlare"
+                parlaGinevra("Ciao! Sono Ginevra, l'assistente di Club For Web. Come posso aiutarti oggi?");
+            } else {
+                // Termina Chiamata
+                isCalling = false;
+                container.classList.remove('active-call');
+                btn.classList.remove('calling');
+                btnText.innerText = "Inizia la Chiamata";
+                window.speechSynthesis.cancel();
             }
         }
-        init();
+
+        function parlaGinevra(testo) {
+            // Usiamo le API vocali del browser (Gratis e senza limiti)
+            const msg = new SpeechSynthesisUtterance();
+            msg.text = testo;
+            msg.lang = 'it-IT';
+            msg.rate = 1.0;
+            msg.pitch = 1.1; // Voce leggermente più femminile
+            window.speechSynthesis.speak(msg);
+        }
     </script>
 </body>
 </html>
+
 
 
 
