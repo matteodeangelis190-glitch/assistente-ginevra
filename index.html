@@ -5,78 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ginevra - Assistente Club For Web</title>
     <style>
-        body {
-            margin: 0; padding: 0;
-            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle at center, #1fb9b3 0%, #0a4d4a 100%);
-            height: 100vh; display: flex; justify-content: center; align-items: center;
-            color: white; overflow: hidden;
-        }
-
+        body { margin: 0; padding: 0; font-family: 'Segoe UI', Roboto, sans-serif; background: radial-gradient(circle at center, #1fb9b3 0%, #0a4d4a 100%); height: 100vh; display: flex; justify-content: center; align-items: center; color: white; overflow: hidden; }
         .container { text-align: center; width: 100%; max-width: 400px; }
-
-        /* SCRITTA SOPRA L'AVATAR */
-        .header-title {
-            font-size: 12px; letter-spacing: 3px; font-weight: bold;
-            color: rgba(255,255,255,0.8); margin-bottom: 30px; text-transform: uppercase;
-        }
-
-        .avatar-wrapper {
-            position: relative; width: 220px; height: 220px; margin: 0 auto;
-        }
-
-        .avatar-img {
-            width: 100%; height: 100%; border-radius: 50%;
-            border: 4px solid #ffffff; position: relative; z-index: 5;
-            object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.3);
-        }
-
-        .pulse {
-            position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border-radius: 50%; background: rgba(255, 255, 255, 0.4);
-            z-index: 1; display: none;
-        }
-
-        .active-call .pulse {
-            display: block; animation: pulse-ring 1.2s infinite ease-out;
-        }
-
-        @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 0.7; }
-            100% { transform: scale(1.5); opacity: 0; }
-        }
-
+        .header-title { font-size: 12px; letter-spacing: 3px; font-weight: bold; color: rgba(255,255,255,0.8); margin-bottom: 30px; text-transform: uppercase; }
+        .avatar-wrapper { position: relative; width: 220px; height: 220px; margin: 0 auto; }
+        .avatar-img { width: 100%; height: 100%; border-radius: 50%; border: 4px solid #ffffff; position: relative; z-index: 5; object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.3); }
+        .pulse { position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px; border-radius: 50%; background: rgba(255, 255, 255, 0.4); z-index: 1; display: none; }
+        .active-call .pulse { display: block; animation: pulse-ring 1.2s infinite ease-out; }
+        @keyframes pulse-ring { 0% { transform: scale(1); opacity: 0.7; } 100% { transform: scale(1.5); opacity: 0; } }
         .ginevra-name { font-size: 42px; margin: 20px 0; font-weight: bold; }
-
-        .call-button {
-            background-color: white; color: #0a4d4a; border: none;
-            padding: 15px 40px; border-radius: 50px; font-size: 18px;
-            font-weight: bold; cursor: pointer; transition: 0.3s;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
-        }
-
+        .call-button { background-color: white; color: #0a4d4a; border: none; padding: 15px 40px; border-radius: 50px; font-size: 18px; font-weight: bold; cursor: pointer; transition: 0.3s; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
         .call-button.active { background-color: #ff4d4d; color: white; }
-
-        #status {
-            margin-top: 25px; font-size: 14px; color: #ffffff;
-            height: 20px; font-weight: 300; font-style: italic;
-        }
+        #status { margin-top: 25px; font-size: 14px; color: #ffffff; height: 20px; font-style: italic; }
     </style>
 </head>
 <body>
-
     <div class="container" id="app">
         <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
-        
-        <div class="avatar-wrapper">
-            <div class="pulse"></div>
-            <img src="ginevra_viso.png" class="avatar-img" alt="Ginevra">
-        </div>
-
+        <div class="avatar-wrapper"><div class="pulse"></div><img src="ginevra_viso.png" class="avatar-img" alt="Ginevra"></div>
         <div class="ginevra-name">Ginevra</div>
-
         <button class="call-button" id="btnAction">Inizia la Chiamata</button>
-        
         <div id="status"></div>
     </div>
 
@@ -84,38 +32,22 @@
         const btn = document.getElementById('btnAction');
         const app = document.getElementById('app');
         const status = document.getElementById('status');
-        
         let isCalling = false;
-        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
-        const recognition = new SpeechRecognition();
+
+        const recognition = new (window.SpeechRecognition || window.webkitSpeechRecognition)();
         recognition.lang = 'it-IT';
 
         function parla(testo) {
             if (!isCalling) return;
             window.speechSynthesis.cancel();
-            
-            // Pulizia simboli e parole indesiderate
-            let t = testo.replace(/\*/g, '').replace(/>/g, '')
-                         .replace(/asterisco/gi, '').replace(/freccetta/gi, '')
-                         .replace(/destra/gi, '').replace(/[#_~`]/g, '')
-                         .replace(/\s+/g, ' ').trim();
-            
+            let t = testo.replace(/\*/g, '').replace(/>/g, '').replace(/asterisco/gi, '').replace(/freccetta/gi, '').replace(/destra/gi, '').replace(/[#_~`]/g, '').replace(/\s+/g, ' ').trim();
             const msg = new SpeechSynthesisUtterance(t);
             msg.lang = 'it-IT';
-            
             const voices = window.speechSynthesis.getVoices();
-            
-            // PRIORITÀ VOCE: Isabella (Edge) o Google (Chrome) - No uomini
-            const ginevraVoice = voices.find(v => v.name.includes('Isabella')) 
-                                 || voices.find(v => v.name.includes('Google') && v.lang.includes('it'))
-                                 || voices.find(v => v.name.includes('Elsa'))
-                                 || voices.find(v => v.lang.includes('it') && !v.name.includes('Cosimo') && !v.name.includes('Fabio'));
-
+            const ginevraVoice = voices.find(v => v.name.includes('Isabella')) || voices.find(v => v.name.includes('Google') && v.lang.includes('it')) || voices.find(v => v.lang.includes('it'));
             if (ginevraVoice) msg.voice = ginevraVoice;
-
             msg.pitch = 1.1; 
             msg.rate = 0.95; 
-
             msg.onend = () => { if(isCalling) recognition.start(); };
             window.speechSynthesis.speak(msg);
         }
@@ -131,26 +63,26 @@
                 isCalling = false;
                 window.speechSynthesis.cancel();
                 recognition.stop();
-                location.reload(); 
+                location.reload();
             }
         };
 
         recognition.onresult = async (event) => {
             const domanda = event.results[0][0].transcript;
             status.innerText = "Ginevra sta elaborando...";
-            
             try {
-                const response = await fetch("const response = await fetch("https://linus-svelter-mariana.ngrok-free.dev/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752",{
+                // INDIRIZZO NGROK CORRETTO
+                const response = await fetch("https://linus-svelter-mariana.ngrok-free.dev/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ "question": domanda })
                 });
-
                 const data = await response.json();
-                status.innerText = ""; 
+                status.innerText = "";
                 if (isCalling) parla(data.text);
             } catch (error) {
-                console.error(error);
+                console.error("Errore:", error);
+                status.innerText = "Errore di connessione";
             }
         };
 
@@ -158,6 +90,7 @@
     </script>
 </body>
 </html>
+
 
 
 
