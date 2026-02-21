@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Ginevra - Assistente Vocale Club For Web</title>
+    <title>Ginevra - Assistente Club For Web</title>
     <style>
-        /* STILE CSS */
         body {
             margin: 0;
             padding: 0;
-            font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
-            background: radial-gradient(circle, #0a2e2c 0%, #000000 100%);
+            font-family: 'Segoe UI', Roboto, sans-serif;
+            /* Sfondo dinamico ispirato alle bozze */
+            background: radial-gradient(circle at center, #1fb9b3 0%, #072e2c 100%);
             height: 100vh;
             display: flex;
             justify-content: center;
@@ -19,22 +19,18 @@
             overflow: hidden;
         }
 
-        .container {
-            text-align: center;
-            width: 100%;
-            max-width: 500px;
-        }
+        .container { text-align: center; z-index: 10; }
 
         .header-title {
             font-size: 14px;
             letter-spacing: 3px;
             font-weight: bold;
-            color: #5dece6;
+            color: #ffffff;
             margin-bottom: 40px;
             text-transform: uppercase;
+            opacity: 0.9;
         }
 
-        /* Avatar e Cerchio Dinamico */
         .avatar-wrapper {
             position: relative;
             width: 220px;
@@ -46,78 +42,72 @@
             width: 100%;
             height: 100%;
             border-radius: 50%;
-            border: 3px solid #5dece6;
+            border: 4px solid #5dece6;
             position: relative;
             z-index: 5;
             object-fit: cover;
-            background-color: #000;
+            box-shadow: 0 0 30px rgba(93, 236, 230, 0.3);
         }
 
-        /* Effetto Pulse Chiamata */
+        /* Effetto Cerchio Dinamico (Onda Chiamata) */
         .pulse {
             position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
+            top: -10px; left: -10px; right: -10px; bottom: -10px;
             border-radius: 50%;
-            background: rgba(93, 236, 230, 0.4);
+            background: rgba(93, 236, 230, 0.2);
             z-index: 1;
-            display: none; /* Si attiva solo in chiamata */
+            display: none;
         }
 
         .active-call .pulse {
             display: block;
-            animation: pulse-animation 2s infinite;
+            animation: pulse-ring 2s infinite;
         }
 
-        @keyframes pulse-animation {
-            0% { transform: scale(1); opacity: 0.8; }
-            100% { transform: scale(1.6); opacity: 0; }
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.7; }
+            50% { opacity: 0.3; }
+            100% { transform: scale(1.5); opacity: 0; }
         }
 
         .ginevra-name {
-            font-size: 38px;
-            margin: 25px 0;
+            font-size: 42px;
+            margin: 20px 0;
             font-weight: bold;
-            letter-spacing: 1px;
+            text-shadow: 2px 2px 10px rgba(0,0,0,0.5);
         }
 
-        /* Pulsante Centrale */
         .call-button {
-            background-color: white;
-            color: black;
+            background-color: #ffffff;
+            color: #072e2c;
             border: none;
-            padding: 16px 45px;
+            padding: 18px 50px;
             border-radius: 50px;
             font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             display: inline-flex;
             align-items: center;
-            gap: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            gap: 15px;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
         }
 
-        .call-button:hover {
-            transform: scale(1.05);
-            background-color: #5dece6;
-        }
+        .call-button:hover { transform: translateY(-3px); box-shadow: 0 15px 25px rgba(0,0,0,0.3); }
+        .call-button.active { background-color: #ff4b4b; color: white; }
 
-        .call-button.calling {
-            background-color: #ff4b4b;
-            color: white;
-        }
-
-        .mic-icon {
-            font-size: 20px;
+        #status-text {
+            margin-top: 20px;
+            font-style: italic;
+            font-size: 14px;
+            color: #5dece6;
+            height: 20px;
         }
     </style>
 </head>
 <body>
 
-    <div class="container" id="mainContainer">
+    <div class="container" id="app">
         <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
         
         <div class="avatar-wrapper">
@@ -127,51 +117,103 @@
 
         <div class="ginevra-name">Ginevra</div>
 
-        <button class="call-button" id="btnCall" onclick="toggleCall()">
-            <span class="mic-icon">🎤</span> <span id="btnText">Inizia la Chiamata</span>
+        <button class="call-button" id="btnAction">
+            <span id="btn-icon">🎤</span> <span id="btn-text">Inizia la Chiamata</span>
         </button>
+        
+        <div id="status-text"></div>
     </div>
 
     <script>
-        /* FUNZIONAMENTO JAVASCRIPT */
+        const btn = document.getElementById('btnAction');
+        const app = document.getElementById('app');
+        const status = document.getElementById('status-text');
+        
+        // Configurazione Riconoscimento Vocale
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        const recognition = new SpeechRecognition();
+        recognition.lang = 'it-IT';
+        recognition.continuous = false;
+
         let isCalling = false;
 
-        function toggleCall() {
-            const container = document.getElementById('mainContainer');
-            const btn = document.getElementById('btnCall');
-            const btnText = document.getElementById('btnText');
-
+        btn.onclick = () => {
             if (!isCalling) {
-                // Inizia Chiamata
-                isCalling = true;
-                container.classList.add('active-call');
-                btn.classList.add('calling');
-                btnText.innerText = "Termina Chiamata";
-                
-                // Qui l'assistente inizia a "parlare"
-                parlaGinevra("Ciao! Sono Ginevra, l'assistente di Club For Web. Come posso aiutarti oggi?");
+                startCall();
             } else {
-                // Termina Chiamata
-                isCalling = false;
-                container.classList.remove('active-call');
-                btn.classList.remove('calling');
-                btnText.innerText = "Inizia la Chiamata";
-                window.speechSynthesis.cancel();
+                stopCall();
             }
+        };
+
+        function startCall() {
+            isCalling = true;
+            app.classList.add('active-call');
+            btn.classList.add('active');
+            document.getElementById('btn-text').innerText = "Termina";
+            
+            speak("Ciao! Sono Ginevra. Sono pronta ad aiutarti con i servizi di Club For Web. Cosa vorresti sapere?");
         }
 
-        function parlaGinevra(testo) {
-            // Usiamo le API vocali del browser (Gratis e senza limiti)
-            const msg = new SpeechSynthesisUtterance();
-            msg.text = testo;
-            msg.lang = 'it-IT';
-            msg.rate = 1.0;
-            msg.pitch = 1.1; // Voce leggermente più femminile
-            window.speechSynthesis.speak(msg);
+        function stopCall() {
+            isCalling = false;
+            app.classList.remove('active-call');
+            btn.classList.remove('active');
+            document.getElementById('btn-text').innerText = "Inizia la Chiamata";
+            window.speechSynthesis.cancel();
+            recognition.stop();
+            status.innerText = "";
         }
+
+        function speak(text) {
+            const utterance = new SpeechSynthesisUtterance(text);
+            utterance.lang = 'it-IT';
+            
+            // Cerchiamo una voce femminile italiana nel browser
+            const voices = window.speechSynthesis.getVoices();
+            const femaleVoice = voices.find(v => v.name.includes('Elsa') || v.name.includes('Alice') || v.name.includes('Paola') || v.lang === 'it-IT');
+            if (femaleVoice) utterance.voice = femaleVoice;
+            
+            utterance.pitch = 1.2; // Rende la voce più femminile e acuta
+            utterance.rate = 1.0;
+
+            utterance.onend = () => {
+                if(isCalling) {
+                    status.innerText = "Ginevra ti ascolta...";
+                    recognition.start();
+                }
+            };
+
+            window.speechSynthesis.speak(utterance);
+        }
+
+        recognition.onresult = (event) => {
+            const speechToText = event.results[0][0].transcript.toLowerCase();
+            status.innerText = "Hai detto: " + speechToText;
+            
+            // Logica di risposta basata sul sito
+            rispondiAgliUtenti(speechToText);
+        };
+
+        function rispondiAgliUtenti(domanda) {
+            let risposta = "Scusami, non ho capito bene. Puoi ripetere?";
+
+            if (domanda.includes("chi siete") || domanda.includes("club for web")) {
+                risposta = "Club For Web è un'agenzia specializzata in soluzioni digitali, siti web e marketing innovativo.";
+            } else if (domanda.includes("servizi") || domanda.includes("cosa fate")) {
+                risposta = "Creiamo siti web, assistenti virtuali come me, e gestiamo la presenza online delle aziende.";
+            } else if (domanda.includes("contatti") || domanda.includes("chiamare")) {
+                risposta = "Puoi contattarci tramite il modulo sul sito o premendo il tasto WhatsApp se presente!";
+            }
+
+            setTimeout(() => speak(risposta), 500);
+        }
+
+        // Caricamento voci (alcuni browser le caricano in ritardo)
+        window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     </script>
 </body>
 </html>
+
 
 
 
