@@ -140,7 +140,7 @@
             status.innerText = "Ginevra sta elaborando...";
             
             try {
-                const response = await fetch("http://localhost:3000/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
+                const response = await fetch("const response = await fetch("https://linus-svelter-mariana.ngrok-free.dev/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752",{
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
                     body: JSON.stringify({ "question": domanda })
@@ -158,6 +158,7 @@
     </script>
 </body>
 </html>
+
 
 
 
