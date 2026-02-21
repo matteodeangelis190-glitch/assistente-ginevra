@@ -6,105 +6,66 @@
     <title>Ginevra - Assistente Club For Web</title>
     <style>
         body {
-            margin: 0;
-            padding: 0;
+            margin: 0; padding: 0;
             font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
-            /* Sfondo Teal Professionale come richiesto */
             background: radial-gradient(circle at center, #1fb9b3 0%, #0a4d4a 100%);
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            overflow: hidden;
+            height: 100vh; display: flex; justify-content: center; align-items: center;
+            color: white; overflow: hidden;
         }
 
-        .container { text-align: center; z-index: 10; width: 100%; }
+        .container { text-align: center; width: 100%; max-width: 400px; }
 
         .header-title {
-            font-size: 13px;
-            letter-spacing: 3px;
-            font-weight: bold;
-            color: rgba(255,255,255,0.9);
-            margin-bottom: 40px;
-            text-transform: uppercase;
+            font-size: 12px; letter-spacing: 3px; font-weight: bold;
+            color: rgba(255,255,255,0.8); margin-bottom: 30px; text-transform: uppercase;
         }
 
         .avatar-wrapper {
-            position: relative;
-            width: 220px;
-            height: 220px;
-            margin: 0 auto;
+            position: relative; width: 220px; height: 220px; margin: 0 auto;
         }
 
         .avatar-img {
-            width: 100%;
-            height: 100%;
-            border-radius: 50%;
-            border: 4px solid #ffffff;
-            position: relative;
-            z-index: 5;
-            object-fit: cover;
-            box-shadow: 0 0 30px rgba(0,0,0,0.3);
+            width: 100%; height: 100%; border-radius: 50%;
+            border: 4px solid #ffffff; position: relative; z-index: 5;
+            object-fit: cover; box-shadow: 0 0 30px rgba(0,0,0,0.3);
         }
 
-        /* Onda Dinamica della Chiamata */
         .pulse {
-            position: absolute;
-            top: -5px; left: -5px; right: -5px; bottom: -5px;
-            border-radius: 50%;
-            background: rgba(255, 255, 255, 0.3);
-            z-index: 1;
-            display: none;
+            position: absolute; top: -5px; left: -5px; right: -5px; bottom: -5px;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.4);
+            z-index: 1; display: none;
         }
 
         .active-call .pulse {
-            display: block;
-            animation: pulse-ring 1.5s infinite ease-out;
+            display: block; animation: pulse-ring 1.5s infinite ease-out;
         }
 
         @keyframes pulse-ring {
-            0% { transform: scale(1); opacity: 0.6; }
-            100% { transform: scale(1.4); opacity: 0; }
+            0% { transform: scale(1); opacity: 0.7; }
+            100% { transform: scale(1.5); opacity: 0; }
         }
 
-        .ginevra-name {
-            font-size: 42px;
-            margin: 25px 0;
-            font-weight: bold;
-        }
+        .ginevra-name { font-size: 42px; margin: 20px 0; font-weight: bold; }
 
         .call-button {
-            background-color: white;
-            color: #0a4d4a;
-            border: 1px solid #000;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 18px;
-            font-weight: bold;
-            cursor: pointer;
-            display: inline-flex;
-            align-items: center;
-            gap: 12px;
-            transition: all 0.3s;
+            background-color: white; color: #0a4d4a; border: none;
+            padding: 15px 40px; border-radius: 50px; font-size: 18px;
+            font-weight: bold; cursor: pointer; transition: all 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
-        .call-button:hover { transform: scale(1.05); }
-        .call-button.active { background-color: #ff4d4d; color: white; border: none; }
+        .call-button.active { background-color: #ff4d4d; color: white; }
 
         #status {
-            margin-top: 20px;
-            font-size: 14px;
-            color: #ffffff;
-            height: 20px;
-            font-weight: 300;
+            margin-top: 25px; font-size: 14px; color: #ffffff;
+            height: 20px; font-weight: 300; font-style: italic;
         }
     </style>
 </head>
 <body>
 
     <div class="container" id="app">
-        <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
+        <div class="header-title">AI VOCALE INTERATTIVA</div>
         
         <div class="avatar-wrapper">
             <div class="pulse"></div>
@@ -113,9 +74,7 @@
 
         <div class="ginevra-name">Ginevra</div>
 
-        <button class="call-button" id="btnAction">
-            <span id="icon">🎤</span> <span id="text">Inizia la Chiamata</span>
-        </button>
+        <button class="call-button" id="btnAction">Inizia la Chiamata</button>
         
         <div id="status"></div>
     </div>
@@ -131,50 +90,48 @@
         recognition.lang = 'it-IT';
         recognition.continuous = false;
 
-        btn.onclick = () => {
-            if (!isCalling) {
-                isCalling = true;
-                app.classList.add('active-call');
-                btn.classList.add('active');
-                document.getElementById('text').innerText = "Termina";
-                document.getElementById('icon').innerText = "📞";
-                parla("Ciao! Sono Ginevra. Sono pronta ad aiutarti. Cosa vorresti sapere su Club For Web?");
-            } else {
-                location.reload(); 
-            }
-        };
-
-        // FUNZIONE VOCE FEMMINILE OTTIMIZZATA
+        // FUNZIONE VOCE OTTIMIZZATA (GOOGLE VOICE)
         function parla(testo) {
             window.speechSynthesis.cancel();
             const msg = new SpeechSynthesisUtterance(testo);
             msg.lang = 'it-IT';
             
-            // Cerchiamo la voce di Google (molto più naturale) o Alice
+            // Forza la ricerca della voce di Google (più umana)
             const voices = window.speechSynthesis.getVoices();
-            const ginevraVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
-                                 || voices.find(v => v.name.includes('Alice')) 
-                                 || voices.find(v => v.lang.includes('it'));
+            const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
+                                  || voices.find(v => v.lang.includes('it'));
 
-            if (ginevraVoice) msg.voice = ginevraVoice;
+            if (preferredVoice) msg.voice = preferredVoice;
             msg.pitch = 1.1; 
-            msg.rate = 1.0;
+            msg.rate = 1.0; 
 
             msg.onend = () => {
                 if(isCalling) {
-                    status.innerText = "Ginevra ti ascolta...";
+                    status.innerText = "Ti ascolto...";
                     recognition.start();
                 }
             };
             window.speechSynthesis.speak(msg);
         }
 
+        btn.onclick = () => {
+            if (!isCalling) {
+                isCalling = true;
+                app.classList.add('active-call');
+                btn.classList.add('active');
+                btn.innerText = "Termina";
+                parla("Ciao! Sono Ginevra. Chiedimi pure quello che vuoi sul mondo Club For Web!");
+            } else {
+                location.reload(); 
+            }
+        };
+
         recognition.onresult = async (event) => {
             const domanda = event.results[0][0].transcript;
             status.innerText = "Ginevra sta pensando...";
             
             try {
-                // CHIAMATA AL TUO FLOWISE LOCALE
+                // CHIAMATA A FLOWISE (Velocizzata)
                 const response = await fetch("http://localhost:3000/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -183,14 +140,14 @@
 
                 const data = await response.json();
                 status.innerText = ""; 
-                parla(data.text || "Sto elaborando le informazioni del sito...");
+                // Se la risposta è troppo lunga, la accorciamo per la velocità
+                parla(data.text);
             } catch (error) {
-                console.error("Errore:", error);
-                parla("Scusami, assicurati che Docker e Flowise siano attivi sul tuo PC.");
+                parla("Assicurati che Flowise e Docker siano attivi sul tuo PC.");
             }
         };
 
-        // Caricamento preventivo delle voci per Chrome
+        // Caricamento voci per Chrome
         window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     </script>
 </body>
