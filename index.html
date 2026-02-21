@@ -37,7 +37,7 @@
         }
 
         .active-call .pulse {
-            display: block; animation: pulse-ring 1.5s infinite ease-out;
+            display: block; animation: pulse-ring 1.2s infinite ease-out;
         }
 
         @keyframes pulse-ring {
@@ -50,7 +50,7 @@
         .call-button {
             background-color: white; color: #0a4d4a; border: none;
             padding: 15px 40px; border-radius: 50px; font-size: 18px;
-            font-weight: bold; cursor: pointer; transition: all 0.3s;
+            font-weight: bold; cursor: pointer; transition: 0.3s;
             box-shadow: 0 4px 15px rgba(0,0,0,0.2);
         }
 
@@ -65,7 +65,7 @@
 <body>
 
     <div class="container" id="app">
-        <div class="header-title">AI VOCALE INTERATTIVA</div>
+        <div class="header-title">ASSISTENTE VOCALE CLUB FOR WEB</div>
         
         <div class="avatar-wrapper">
             <div class="pulse"></div>
@@ -88,29 +88,31 @@
         const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
         const recognition = new SpeechRecognition();
         recognition.lang = 'it-IT';
-        recognition.continuous = false;
 
-        // FUNZIONE VOCE OTTIMIZZATA (GOOGLE VOICE)
+        // --- FUNZIONE VOCE PULITA (FILTRA ASTERISCHI) ---
         function parla(testo) {
             window.speechSynthesis.cancel();
-            const msg = new SpeechSynthesisUtterance(testo);
+            
+            // Rimuove asterischi, cancelletti, trattini e simboli Markdown prima di parlare
+            let testoPulito = testo.replace(/[*#_~`>]/g, '')
+                                   .replace(/[-+•]\s+/g, '. ') // Trasforma i punti elenco in pause
+                                   .replace(/\s+/g, ' ')       // Rimuove spazi doppi
+                                   .trim();
+            
+            const msg = new SpeechSynthesisUtterance(testoPulito);
             msg.lang = 'it-IT';
             
-            // Forza la ricerca della voce di Google (più umana)
             const voices = window.speechSynthesis.getVoices();
-            const preferredVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
-                                  || voices.find(v => v.lang.includes('it'));
+            // Cerchiamo la voce di Google (quella più bella e naturale)
+            const ginevraVoice = voices.find(v => v.name.includes('Google') && v.lang.includes('it')) 
+                                 || voices.find(v => v.name.includes('Alice'))
+                                 || voices.find(v => v.lang.includes('it'));
 
-            if (preferredVoice) msg.voice = preferredVoice;
+            if (ginevraVoice) msg.voice = ginevraVoice;
             msg.pitch = 1.1; 
             msg.rate = 1.0; 
 
-            msg.onend = () => {
-                if(isCalling) {
-                    status.innerText = "Ti ascolto...";
-                    recognition.start();
-                }
-            };
+            msg.onend = () => { if(isCalling) recognition.start(); };
             window.speechSynthesis.speak(msg);
         }
 
@@ -128,10 +130,10 @@
 
         recognition.onresult = async (event) => {
             const domanda = event.results[0][0].transcript;
-            status.innerText = "Ginevra sta pensando...";
+            status.innerText = "Ginevra sta elaborando...";
             
             try {
-                // CHIAMATA A FLOWISE (Velocizzata)
+                // Connessione al tuo Flowise locale (assicurati che Docker sia attivo)
                 const response = await fetch("http://localhost:3000/api/v1/prediction/d83aac73-ebc6-4f7e-b6d6-73ea79271752", {
                     method: "POST",
                     headers: { "Content-Type": "application/json" },
@@ -140,14 +142,12 @@
 
                 const data = await response.json();
                 status.innerText = ""; 
-                // Se la risposta è troppo lunga, la accorciamo per la velocità
                 parla(data.text);
             } catch (error) {
-                parla("Assicurati che Flowise e Docker siano attivi sul tuo PC.");
+                parla("Assicurati che Docker sia attivo sul tuo computer.");
             }
         };
 
-        // Caricamento voci per Chrome
         window.speechSynthesis.onvoiceschanged = () => window.speechSynthesis.getVoices();
     </script>
 </body>
